@@ -1,20 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-    imgData: [],
+    currentImgData: [],
+    currentPage: 1,
 }
 
 export const dataSlice = createSlice({
-    name: 'imgData',
+    name: 'data',
     initialState,
     reducers: {
         setCurrent: (state, action) => {
-            state.imgData = [...state, action.payload]
+            state.currentImgData = action.payload
         },
+
     },
 })
 
 // Action creators are generated for each case reducer function
 export const { setCurrent } = dataSlice.actions
+
 
 export default dataSlice.reducer

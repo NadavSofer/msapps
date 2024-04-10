@@ -9,9 +9,9 @@ const CategoryModal = ({closeModal}) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(currentCategory);
-        // dispatch(setCategory(currentCategory));
-        console.log(storedCategory);
+        if (currentCategory !== '') {
+            dispatch(setCategory(currentCategory));
+        }
         closeModal()
     };
 

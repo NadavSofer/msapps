@@ -8,13 +8,29 @@ import CategoryModal from './CategoryModal.js';
 import Modal from 'react-modal'
 
 
+
+
+
+const customStyles = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+        width: '70%',
+        height: '50%'
+    },
+};
+
 const Test = () => {
     const dispatch = useDispatch();
     const storedCategory = useSelector(state => state.data.currentCategory)
     const storedPage = useSelector(state => state.data.currentPage)
     const [modalIsOpen, setIsOpen] = useState(false);
+    Modal.setAppElement(document.getElementById('Test'));
 
-    // Modal.setAppElement('#Test');
 
     useEffect(() => {
         fetchData();
@@ -22,7 +38,7 @@ const Test = () => {
 
     const fetchData = async () => {
         try {
-            const response = await fetch(`/api/${storedCategory}/${storedPage}`);
+            const response = await fetch(`http://localhost:5000/api/${storedCategory}/${storedPage}`);
             const jsonData = await response.json();
             dispatch(setCurrent(jsonData.data.hits))
             dispatch(setLastPage(jsonData.maxPage))
@@ -30,8 +46,13 @@ const Test = () => {
             console.error('Error fetching data:', error);
         }
     };
+
     function openModal() {
         setIsOpen(true);
+    }
+
+    function closeModal() {
+        setIsOpen(false);
     }
 
     // function afterOpenModal() {
@@ -39,29 +60,30 @@ const Test = () => {
     //     subtitle.style.color = '#f00';
     // }
 
-    function closeModal() {
-        setIsOpen(false);
-    }
+
 
 
     return (
-        <div>
-            <button className='bg-cyan-400 text-slate-100 text-3xl m-5 px-5 py-3 w-40 rounded-xl' onClick={openModal}>Open Modal</button>
+        <div className='w-full h-full flex flex-col items-center justify-center' id='Test'>
+            
+            <div className='flex items-center'>
+                <Button text='Prev' pageNumber={storedPage} action={decrementPage()}></Button>
+                <button className='bg-cyan-400 text-slate-100 w-fit text-3xl m-5 px-5 py-3 rounded-xl' onClick={openModal}>Search</button>
+                
+                <Button text='Next' pageNumber={storedPage} action={incrementPage()}></Button>
+            </div>
             <Modal
                 isOpen={modalIsOpen}
                 // onAfterOpen={afterOpenModal}
                 onRequestClose={closeModal}
-                contentLabel="Example Modal"
+                style={customStyles}
+                contentLabel="Category Modal"
             >
-                <CategoryModal closeModal={()=> closeModal()}></CategoryModal>
+                <CategoryModal closeModal={() => closeModal()}></CategoryModal>
             </Modal>
 
             <ImagesContainer></ImagesContainer>
-            <div className='flex items-center'>
-                <Button text='Prev' pageNumber={storedPage} action={decrementPage()}></Button>
-                <p className='text-slate-100 text-3xl ${}'>{storedPage}</p>
-                <Button text='Next' pageNumber={storedPage} action={incrementPage()}></Button>
-            </div>
+            <p className='text-slate-100 text-3xl ${}'>{storedPage}</p>
         </div>
     )
 }

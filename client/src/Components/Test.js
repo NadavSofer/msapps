@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { setCategory, setCurrent, setLastPage, incrementPage, decrementPage } from '../redux/dataSlice.js'
+import { setCategory, setCurrent, setLastPage, incrementPage, decrementPage, fetchImages } from '../redux/dataSlice.js'
 import ImagesContainer from './ImagesContainer.js';
 import Button from './Button';
 import CategoryModal from './CategoryModal.js';
@@ -25,27 +25,12 @@ const customStyles = {
 };
 
 const Test = () => {
-    const dispatch = useDispatch();
-    const storedCategory = useSelector(state => state.data.currentCategory)
     const storedPage = useSelector(state => state.data.currentPage)
     const [modalIsOpen, setIsOpen] = useState(false);
+    const currentImgs = useSelector(state => state.data.currentImgData)
+    const storedCategory = useSelector(state => state.data.currentCategory)
+    const dispatch = useDispatch();
     Modal.setAppElement(document.getElementById('Test'));
-
-
-    useEffect(() => {
-        fetchData();
-    }, [storedCategory, storedPage]);
-
-    const fetchData = async () => {
-        try {
-            const response = await fetch(`http://localhost:5000/api/${storedCategory}/${storedPage}`);
-            const jsonData = await response.json();
-            dispatch(setCurrent(jsonData.data.hits))
-            dispatch(setLastPage(jsonData.maxPage))
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
 
     function openModal() {
         setIsOpen(true);
@@ -55,12 +40,14 @@ const Test = () => {
         setIsOpen(false);
     }
 
-    // function afterOpenModal() {
-    //     // references are now sync'd and can be accessed.
-    //     subtitle.style.color = '#f00';
-    // }
-
-
+    const handleNext = () => {
+        console.log(currentImgs.length, storedPage-1);
+        if (storedPage-1 === currentImgs.length - 2) {
+            dispatch(fetchImages({category:storedCategory, page:storedPage, numPerPage: 9}))
+        }
+        dispatch(incrementPage())
+        console.log(currentImgs);
+    }
 
 
     return (
@@ -70,7 +57,7 @@ const Test = () => {
                 <Button text='Prev' pageNumber={storedPage} action={decrementPage()}></Button>
                 <button className='bg-cyan-400 text-slate-100 w-fit text-3xl m-5 px-5 py-3 rounded-xl' onClick={openModal}>Search</button>
                 
-                <Button text='Next' pageNumber={storedPage} action={incrementPage()}></Button>
+                <Button text='Next' pageNumber={storedPage} action={()=>handleNext()}></Button>
             </div>
             <Modal
                 isOpen={modalIsOpen}
@@ -81,9 +68,7 @@ const Test = () => {
             >
                 <CategoryModal closeModal={() => closeModal()}></CategoryModal>
             </Modal>
-
             <ImagesContainer></ImagesContainer>
-            <p className='text-slate-100 text-3xl ${}'>{storedPage}</p>
         </div>
     )
 }

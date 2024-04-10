@@ -7,11 +7,11 @@ app.use(cors());
 
 const PIXABAY_API_KEY = '25540812-faf2b76d586c1787d2dd02736';
 
-app.get('/api/:category/:page', async (req, res) => {
+app.get('/api/:category/:page/:numPerPage', async (req, res) => {
     try {
         const category = req.params.category;
         const page = req.params.page;
-        const perPage = 9;
+        const perPage = req.params.numPerPage;
 
         const response = await axios.get(`https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${category}&per_page=${perPage}&page=${page}`);
 

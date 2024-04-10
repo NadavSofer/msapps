@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const app = express();
+const path = require('path')
 app.use(cors());
 
 const PIXABAY_API_KEY = '25540812-faf2b76d586c1787d2dd02736';
@@ -16,7 +17,9 @@ app.get('/api/:category/:page', async (req, res) => {
 
         const data = response.data;
 
-        res.json({ Message: 'successful', category, page, data });
+        const maxPage = (data.totalHits / 9).toFixed()
+
+        res.json({ Message: 'successful', category, page, maxPage, data });
 
 
     } catch (error) {
@@ -27,4 +30,14 @@ app.get('/api/:category/:page', async (req, res) => {
 
 app.listen(5000, () => {
     console.log('server started on port 5000');
+});
+
+
+// Have Node serve the files for our built React app
+// app.use(express.static(path.resolve(__dirname, "./client/build")));
+app.use(express.static(path.join(__dirname, "client/build")));
+
+// All other GET requests not handled before will return our React app
+app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "./client/build", "index.html"));
 });

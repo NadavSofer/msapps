@@ -37,8 +37,9 @@ export const dataSlice = createSlice({
     name: "data",
     initialState,
     reducers: {
-        setCurrent: (state, action) => {
-            state.currentImgData = action.payload;
+        resetData: (state) => {
+            state.currentImgData = [];
+            state.currentPage = 1
         },
         incrementPage: (state, action) => {
             state.currentPage += 1;
@@ -86,7 +87,7 @@ export const dataSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-    setCurrent,
+    resetData,
     setCategory,
     incrementPage,
     decrementPage,

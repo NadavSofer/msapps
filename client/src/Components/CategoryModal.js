@@ -1,17 +1,20 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { setCategory } from '../redux/dataSlice';
+import { fetchImages, resetData, setCategory } from '../redux/dataSlice';
 
 const CategoryModal = ({closeModal}) => {
     const dispatch = useDispatch();
     const [currentCategory, setCurrentCategory] = useState('');
     const storedCategory = useSelector(state => state.data.currentCategory)
+    const storedPage = useSelector(state => state.data.currentPage)
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (currentCategory !== '') {
             dispatch(setCategory(currentCategory));
         }
+        dispatch(resetData())
         closeModal()
     };
 

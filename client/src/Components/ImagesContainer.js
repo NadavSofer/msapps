@@ -30,7 +30,8 @@ const ImagesContainer = () => {
 
     useEffect(() => {
         dispatch(fetchImages({category:storedCategory, page:storedPage, numPerPage: 18}))
-    }, [])
+
+    }, [storedCategory])
 
     Modal.setAppElement(document.getElementById('Test'));
     function openModal() {

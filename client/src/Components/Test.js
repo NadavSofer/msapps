@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { setCategory, setCurrent, setLastPage, incrementPage, decrementPage, fetchImages } from '../redux/dataSlice.js'
+import { setCategory, resetData, setLastPage, incrementPage, decrementPage, fetchImages } from '../redux/dataSlice.js'
 import ImagesContainer from './ImagesContainer.js';
 import Button from './Button';
 import CategoryModal from './CategoryModal.js';
@@ -46,7 +46,6 @@ const Test = () => {
             dispatch(fetchImages({category:storedCategory, page:storedPage, numPerPage: 9}))
         }
         dispatch(incrementPage())
-        console.log(currentImgs);
     }
 
 

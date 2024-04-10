@@ -1,37 +1,26 @@
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchImages, resetData, setCategory } from '../redux/dataSlice';
+import React from 'react'
+import { useDispatch } from 'react-redux';
+import { resetData, setCategory } from '../redux/dataSlice';
+import CategoryForm from './CategoryForm';
 
 const CategoryModal = ({closeModal}) => {
     const dispatch = useDispatch();
-    const [currentCategory, setCurrentCategory] = useState('');
-    const storedCategory = useSelector(state => state.data.currentCategory)
-    const storedPage = useSelector(state => state.data.currentPage)
-
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (currentCategory !== '') {
-            dispatch(setCategory(currentCategory));
+    
+    const handleCategorySubmit = (category) => {
+        // Will change the category into the inputted result
+        if (category !== '') {
+            dispatch(setCategory(category));
         }
+        // will reset the image list and index
         dispatch(resetData())
+
         closeModal()
     };
-
-    const handleChange = (e) => {
-        setCurrentCategory(e.target.value);
-    };
-
+    
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <input
-                    placeholder='type your category'
-                    value={currentCategory}
-                    onChange={handleChange}
-                />
-                <button type="submit">search</button>
-            </form>
+        <div className='flex flex-col items-center h-full w-full'>
+            <p className='text-slate-100 text-5xl h-1/3 flex items-end'>Search for category</p>
+            <CategoryForm onSubmit={handleCategorySubmit} />
         </div>
     )
 }

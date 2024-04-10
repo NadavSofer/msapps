@@ -4,16 +4,16 @@ const axios = require('axios');
 const app = express();
 const path = require('path')
 app.use(cors());
-
-const PIXABAY_API_KEY = '25540812-faf2b76d586c1787d2dd02736';
+require('dotenv').config();
 
 app.get('/api/:category/:page/:numPerPage', async (req, res) => {
     try {
+        const APIKey = process.env.PIXABAY_API_KEY
         const category = req.params.category;
         const page = req.params.page;
         const perPage = req.params.numPerPage;
 
-        const response = await axios.get(`https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${category}&per_page=${perPage}&page=${page}`);
+        const response = await axios.get(`https://pixabay.com/api/?key=${APIKey}&q=${category}&per_page=${perPage}&page=${page}`);
 
         const data = response.data;
 

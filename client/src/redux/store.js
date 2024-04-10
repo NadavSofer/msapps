@@ -6,3 +6,5 @@ export const store = configureStore({
     data: dataReducer,
   },
 })
+
+// standard redux toolkit store. nothing interesting sadly

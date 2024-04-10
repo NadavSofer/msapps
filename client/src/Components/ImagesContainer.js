@@ -5,35 +5,29 @@ import ImgModal from './ImgModal.js';
 import { fetchImages } from '../redux/dataSlice.js';
 
 
-const customStyles = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-        width: '70%',
-        height: '50%'
-    },
-};
-
 const ImagesContainer = () => {
-    const dispatch = useDispatch();
+    // bringing redux things
     const currentImgs = useSelector(state => state.data.currentImgData)
-    const storedPage = useSelector(state => state.data.currentPage)
+    const storedIndex = useSelector(state => state.data.currentIndex)
     const storedCategory = useSelector(state => state.data.currentCategory)
     const data = useSelector(state => state.data)
+    const dispatch = useDispatch();
 
+    // modal setup
     const [modalIsOpen, setIsOpen] = useState(false);
+    Modal.setAppElement(document.getElementById('Test'));
+
+    // save to local state the data of a clicked image
     const [focusedImg, setFocusedImg] = useState({})
 
+    // will fetch the first set of pictures on mount. will bring two sets to preload the second
+    // this will also trigger on every category change.
     useEffect(() => {
-        dispatch(fetchImages({category:storedCategory, page:storedPage, numPerPage: 18}))
-
+        dispatch(fetchImages({ category: storedCategory, page: storedIndex + 1, numPerPage: 18 }))
     }, [storedCategory])
 
-    Modal.setAppElement(document.getElementById('Test'));
+
+    // more modal things 
     function openModal() {
         setIsOpen(true);
     }
@@ -42,32 +36,41 @@ const ImagesContainer = () => {
         setIsOpen(false);
     }
 
+    // will set the data of clicked in to local state to be sent into the ImgModal
     const handleClick = (imgData) => {
         openModal()
-        console.log(imgData);
         setFocusedImg(imgData)
     }
 
     return (
-        <div className=' h-2/3 w-1/2'>
-            {currentImgs.loading && <div>Loading...</div>}
-            {!currentImgs.loading && data.error ? <div>Error: {data.error}</div> : null}
-            {!currentImgs.loading && data.currentImgData.length ? (
-                <div className='grid-rows-3 grid-cols-3	grid w-full h-full'>
-                    {currentImgs[storedPage-1].map((img) => (
-                        <button key={img.id} onClick={() => handleClick(img)}>
-                            <img src={img.previewURL} className='w-full h-full' alt={img.type}></img>
-                        </button>
-                    ))}
-                    <Modal
-                        isOpen={modalIsOpen}
-                        onRequestClose={closeModal}
-                        style={customStyles}
-                        contentLabel="Category Modal">
-                        <ImgModal imgData={focusedImg}></ImgModal>
-                    </Modal>
-                </div>) : ''}
-
+        <div className='h-2/3 w-1/2'>
+            {/* will check the length of currentImgs. mostly for initial load */}
+            {currentImgs.length !== 0 ? (
+                <>
+                    {currentImgs.loading && <div className='w-full h-full flex justify-center items-center text-slate-100 text-6xl'>Loading...</div>}
+                    {!currentImgs.loading && data.error && <div className='w-full h-full flex justify-center items-center text-slate-100 text-6xl'>Error: {data.error}</div>}
+                    
+                    {!currentImgs.loading && !data.error && data.currentImgData.length > 0 && (
+                        <div className='grid grid-rows-3 grid-cols-3 w-full h-full gap-2'>
+                            
+                            {currentImgs[storedIndex].map((img) => (
+                                <button key={img.id} onClick={() => handleClick(img)} className='border-2 transform transition-transform duration-500 hover:scale-90'>
+                                    <img src={img.previewURL} className='w-full h-full' alt={img.type}></img>
+                                </button>
+                            ))}
+                            <Modal
+                                isOpen={modalIsOpen}
+                                onRequestClose={closeModal}
+                                contentLabel="Category Modal"
+                                className='fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-70 h-1/2 w-1/2 rounded-xl bg-customGrey text-slate-100'>
+                                <ImgModal imgData={focusedImg}></ImgModal>
+                            </Modal>
+                        </div>
+                    )}
+                </>
+            ) : (
+                <p className='w-full h-full flex justify-center items-center text-slate-100 text-6xl'>Please pick a category</p>
+            )}
         </div>
     )
 }

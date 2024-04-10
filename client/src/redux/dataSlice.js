@@ -5,11 +5,13 @@ const initialState = {
     loading: false,
     error: "",
     currentImgData: [],
-    currentPage: 1,
-    currentCategory: "fish",
+    currentIndex: 0,
+    currentCategory: "",
     lastPage: "",
 };
 
+
+// will fetch the data from the server's API 
 export const fetchImages = createAsyncThunk("data/fetchImages", async ({ category, page, numPerPage }) => {
     const res = await axios
         .get(`http://localhost:5000/api/${category}/${page}/${numPerPage}`);
@@ -23,7 +25,6 @@ const preLoadImages = async (images) => {
             images.map((image) => {
                 return new Promise((resolve) => {
                     const img = new Image();
-                    img.src = image.url;
                     img.onload = () => resolve();
                 });
             })
@@ -39,13 +40,13 @@ export const dataSlice = createSlice({
     reducers: {
         resetData: (state) => {
             state.currentImgData = [];
-            state.currentPage = 1
+            state.currentIndex = 0
         },
-        incrementPage: (state, action) => {
-            state.currentPage += 1;
+        incrementPage: (state) => {
+            state.currentIndex += 1;
         },
         decrementPage: (state) => {
-            state.currentPage -= 1;
+            state.currentIndex -= 1;
 
         },
         setCategory: (state, action) => {
@@ -66,7 +67,6 @@ export const dataSlice = createSlice({
             .then(res=> res)
             if (hitsArr.length > 9) {
                 const firstHalf = hitsArr.slice(0, 9);
-
                 const secondHalf = hitsArr.slice(9);
                 state.currentImgData.push(firstHalf)
                 state.currentImgData.push(secondHalf)

@@ -30,7 +30,7 @@ This project consists of a Node.js server and a React client. The Node server re
    ```
 4. Start the server:
    ```
-   npm start
+   npm run dev
    ```
 5. Start the client:
    ```

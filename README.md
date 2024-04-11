@@ -1,4 +1,4 @@
-# Node Server and React Client Project
+# project for msapps - Nadav Sofer
 
 ## Overview
 This project consists of a Node.js server and a React client. The Node server retrieves data from an external API and sends it to the React client. The client excepts the data and saves it into a redux toolkit store. The client allows users to paginate through the data, select a subject, and view detailed information about each item in a modal.

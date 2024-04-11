@@ -37,7 +37,10 @@ const ImagesContainer = () => {
         setIsOpen(false);
     }
 
-    // will set the data of clicked in to local state to be sent into the ImgModal
+    /**
+     * @description: will set the data of clicked in to local state to be sent into the ImgModal
+     * @param imgData specific object our of an arr of 9. from currentImgData in store
+     */
     const handleClick = (imgData) => {
         openModal()
         setFocusedImg(imgData)

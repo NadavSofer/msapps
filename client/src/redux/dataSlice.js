@@ -16,21 +16,34 @@ const initialState = {
 
 //MARK: fetch func
 // will fetch the data from the server's API 
+/**
+ * @description: fetching the 
+ * @param category: user inputted category from CategoryForm
+ * @param page: currentIndex from store + 1 
+ * @param numPerPage: the number of items pre fetch. limiting the API
+ */
 export const fetchImages = createAsyncThunk("data/fetchImages", async ({ category, page, numPerPage }) => {
     const res = await axios
+        // this link will change if the project was deployed
         .get(`http://localhost:5000/api/${category}/${page}/${numPerPage}`);
     
     return res.data;
 });
 
 //MARK: preload func
+/**
+ * @description preloads the images for faster rendering
+ * @param images an array of data with an previewURL among other things
+ */
+
 const preLoadImages = async (images) => {
     try {
         await Promise.all(
             images.map((image) => {
+                console.log(image);
                 return new Promise((resolve) => {
                     const img = new Image();
-                    img.src = image.url;
+                    img.src = image.previewURL;
                     img.onload = () => resolve();
                 });
             })

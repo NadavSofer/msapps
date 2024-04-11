@@ -6,8 +6,12 @@ import CategoryForm from './CategoryForm';
 const CategoryModal = ({closeModal}) => {
     const dispatch = useDispatch();
     
+    /**
+     * 
+     * @description: Will change the category into the inputted result
+     * @param category: user inputted category
+     */
     const handleCategorySubmit = (category) => {
-        // Will change the category into the inputted result
         if (category !== '') {
             dispatch(setCategory(category));
         }

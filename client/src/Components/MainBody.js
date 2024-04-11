@@ -15,6 +15,7 @@ const MainBody = () => {
     const storedCategory = useSelector(state => state.data.currentCategory)
     const dispatch = useDispatch();
 
+    //MARK: modal setup
     // modal setup
     const [modalIsOpen, setIsOpen] = useState(false);
     Modal.setAppElement(document.getElementById('MainBody'));
@@ -37,7 +38,7 @@ const MainBody = () => {
         dispatch(incrementPage())
     }
 
-
+    //MARK: HTML start
     return (
         <div className='w-full h-full flex flex-col items-center justify-center' id='MainBody'>
             <div className='flex items-center gap-20'>
@@ -45,6 +46,8 @@ const MainBody = () => {
                 <button className='bg-customBlue text-slate-100 w-fit text-3xl m-5 px-12 py-3 rounded-xl hover:bg-opacity-60' onClick={openModal} style={{transition:'ease 0.5s'}}>Search</button>
                 <Button text='Next' pageNumber={storedIndex+1} action={()=>handleNext()}></Button>
             </div>
+            
+            {/* MARK:modal */}
             <Modal
                 isOpen={modalIsOpen}
                 onRequestClose={closeModal}

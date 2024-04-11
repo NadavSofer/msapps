@@ -22,6 +22,7 @@ const ImagesContainer = () => {
 
     // will fetch the first set of pictures on mount. will bring two sets to preload the second
     // this will also trigger on every category change.
+    // MARK: THE fetch
     useEffect(() => {
         dispatch(fetchImages({ category: storedCategory, page: storedIndex + 1, numPerPage: 18 }))
     }, [storedCategory])
@@ -41,7 +42,7 @@ const ImagesContainer = () => {
         openModal()
         setFocusedImg(imgData)
     }
-
+    // MARK: HTML start
     return (
         <div className='h-2/3 w-1/2'>
             {/* will check the length of currentImgs. mostly for initial load */}
@@ -51,6 +52,7 @@ const ImagesContainer = () => {
                     {!currentImgs.loading && data.error && <div className='w-full h-full flex justify-center items-center text-slate-100 text-6xl'>Error: {data.error}</div>}
                     
                     {!currentImgs.loading && !data.error && data.currentImgData.length > 0 && (
+                        //MARK: actual start
                         <div className='grid grid-rows-3 grid-cols-3 w-full h-full gap-2'>
                             
                             {currentImgs[storedIndex].map((img) => (
@@ -58,6 +60,7 @@ const ImagesContainer = () => {
                                     <img src={img.previewURL} className='w-full h-full' alt={img.type}></img>
                                 </button>
                             ))}
+                            {/* MARK: modal */}
                             <Modal
                                 isOpen={modalIsOpen}
                                 onRequestClose={closeModal}

@@ -6,41 +6,53 @@ const initialState = {
     loading: false,
     error: "",
     currentImgData: [], // will store arrays of 9 objects from the data that fetchImages fetches. each array of 9 objects will be referred to be me as a 'set'
-    
+
     currentIndex: 0, // will act as the the current position in currentImgData and we'll iterate through it to move between the sets
 
     currentCategory: "", // sets the category
     lastPage: 0, // is the last page that can be fetched. used to disable the the next button
 };
 
-
 //MARK: fetch func
-// will fetch the data from the server's API 
 /**
- * @description: fetching the 
+ * @description: fetching the data from the server's API
  * @param category: user inputted category from CategoryForm
- * @param page: currentIndex from store + 1 
+ * @param page: currentIndex from store + 1
  * @param numPerPage: the number of items pre fetch. limiting the API
  */
-export const fetchImages = createAsyncThunk("data/fetchImages", async ({ category, page, numPerPage }) => {
-    const res = await axios
-        // this link will change if the project was deployed
-        .get(`http://localhost:5000/api/${category}/${page}/${numPerPage}`);
-    
-    return res.data;
-});
+export const fetchImages = createAsyncThunk(
+    "data/fetchImages",
+    async ({ category, page, numPerPage }, thunkAPI) => {
+        try {
+            // this link will change if the project was deployed
+            const response = await axios.get(
+                `http://localhost:5000/api/${category}/${page}/${numPerPage}`
+            );
+
+            const hitsArr = response.data.data.hits;
+
+            // Activates the Preloading function
+            await preLoadImages(hitsArr);
+
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+// this link will change if the project was deployed
 
 //MARK: preload func
 /**
  * @description preloads the images for faster rendering
- * @param images an array of data with an previewURL among other things
+ * @param {}images an array of Objects with an previewURL among other things
  */
 
 const preLoadImages = async (images) => {
     try {
         await Promise.all(
             images.map((image) => {
-                console.log(image);
                 return new Promise((resolve) => {
                     const img = new Image();
                     img.src = image.previewURL;
@@ -59,13 +71,13 @@ export const dataSlice = createSlice({
     initialState,
     //MARK: reducers
     reducers: {
-        // reset the data in the store. is activated on category change 
+        // reset the data in the store. is activated on category change
         resetData: (state) => {
             state.currentImgData = [];
-            state.currentIndex = 0
+            state.currentIndex = 0;
         },
 
-        // will increment and decrement respectively the index to iterate through currentImgData 
+        // will increment and decrement respectively the index to iterate through currentImgData
         incrementPage: (state) => {
             state.currentIndex += 1;
         },
@@ -79,7 +91,7 @@ export const dataSlice = createSlice({
         },
     },
     //MARK: extra reducers
-    extraReducers: builder => {
+    extraReducers: (builder) => {
         // standard loading
         builder.addCase(fetchImages.pending, (state) => {
             state.loading = true;
@@ -88,12 +100,10 @@ export const dataSlice = createSlice({
         // will activated when fetchImages is successful
         builder.addCase(fetchImages.fulfilled, (state, action) => {
             state.loading = false; // remove the loading
-            const hitsArr = action.payload.data.hits // variable for convenience 
-            preLoadImages(hitsArr) // will send the sets to the preload func to do it's thing
-            .then(res=> res)
+            const hitsArr = action.payload.data.hits; // variable for convenience
 
             // in the mounting phase we fetch 18 items for the initial preload
-            // this will cut them in half to keep the structure of 
+            // this will cut them in half to keep the structure of
             //currentImgData to be 9 per set
             if (hitsArr.length > 9) {
                 // cut the initial double set in two
@@ -101,10 +111,10 @@ export const dataSlice = createSlice({
                 const secondHalf = hitsArr.slice(9);
 
                 // and push them in currentImgData
-                state.currentImgData.push(firstHalf)
-                state.currentImgData.push(secondHalf)
+                state.currentImgData.push(firstHalf);
+                state.currentImgData.push(secondHalf);
             } else {
-                state.currentImgData.push(hitsArr)
+                state.currentImgData.push(hitsArr);
             }
             // set the last page to disable the next button when needed
             state.lastPage = action.payload.maxPage;
@@ -120,11 +130,7 @@ export const dataSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const {
-    resetData,
-    setCategory,
-    incrementPage,
-    decrementPage,
-} = dataSlice.actions;
+export const { resetData, setCategory, incrementPage, decrementPage } =
+    dataSlice.actions;
 
 export default dataSlice.reducer;

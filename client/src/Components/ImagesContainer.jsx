@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Modal from "react-modal";
-import ImgModal from "./ImgModal.js";
+import ImgModal from "./ImgModal.jsx";
 import { fetchImages } from "../redux/dataSlice.js";
 
 const ImagesContainer = () => {

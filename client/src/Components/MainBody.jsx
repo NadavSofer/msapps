@@ -6,9 +6,9 @@ import {
     decrementPage,
     fetchImages,
 } from "../redux/dataSlice.js";
-import ImagesContainer from "./ImagesContainer.js";
-import Button from "./Button";
-import CategoryModal from "./CategoryModal.js";
+import ImagesContainer from "./ImagesContainer.jsx";
+import Button from "./Button.jsx";
+import CategoryModal from "./CategoryModal.jsx";
 import Modal from "react-modal";
 
 const MainBody = () => {
